@@ -28,20 +28,22 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
 		ResponseEntity<String> response;
 		String successMsg = msgSource.getMessage("msg.send.success", null, Locale.getDefault());
 		String failMsg = msgSource.getMessage("msg.send.fail", null, Locale.getDefault());
+		String appType = "x-www-form-urlencoded;charset=UTF-8";
+		String linkUrl = "https://developers.kakao.com";
 
 		Map<String, String> header = new HashMap<>();
-		header.put("appType", "x-www-form-urlencoded;charset=UTF-8");
+		header.put("appType", appType);
 		header.put("token", accessToken);
 
     	JSONObject linkObj = new JSONObject();
-    	linkObj.put("web_url", "https://developers.kakao.com");
-    	linkObj.put("mobile_web_url", "https://developers.kakao.com");
+    	linkObj.put("web_url", linkUrl);
+    	linkObj.put("mobile_web_url", linkUrl);
 
     	JSONObject templateObj = new JSONObject();
     	templateObj.put("object_type", "text");
-    	templateObj.put("text", "인코딩 문제니?");
+    	templateObj.put("text", "하이하이");
     	templateObj.put("link", linkObj);
-    	templateObj.put("button_title", "encoding moonaeni?");
+    	templateObj.put("button_title", "버튼입니다.");
 
     	Map<String,String> parameters = new HashMap<>();
     	parameters.put("template_object", "");
