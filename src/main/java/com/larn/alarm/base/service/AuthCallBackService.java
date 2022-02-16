@@ -30,7 +30,7 @@ public class AuthCallBackService extends HttpCallService {
 	public String getAuth(String code) {
 		Map<String, String> header = new HashMap<>();
 		Map<String, String> parameters = new HashMap<>();
-		String body = "";
+		String body = "";//a
 		String authToken = "";
 		String tokenFailMsg = msgSource.getMessage("token.issued.fail", null, Locale.getDefault());
 		String tokenSuccessMsg = msgSource.getMessage("token.issued.success", null, Locale.getDefault());
