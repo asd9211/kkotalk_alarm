@@ -13,7 +13,18 @@
 - 필요기능
   - 나에게 KAKAO 메시지 보내기
     - 아침 오늘의 날씨 알림
-    - 날씨에 따른 추천 옷차림 알림
     - 아침 주요뉴스 알림
+    - 날씨에 따른 옷차림 추천
+    - 날씨에 따른 점심 추천
     - 시간별 영양제 복용 알림
-    - ?
+    - ...
+
+- 기술스택
+  - SpringBoot
+  - Gradle
+  - Open jdk 1.8
+  - Spring Web
+  - SpringScheduler
+  - Kakao API
+  - weather API
+  - ...
