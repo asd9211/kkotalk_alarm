@@ -20,24 +20,32 @@ import com.larn.alarm.utils.StringUtils;
 
 
 @Service
-public class AuthCallBackService extends HttpCallService {
-	private static Logger logger = LoggerFactory.getLogger(AuthCallBackService.class);
+public class AuthService extends HttpCallService {
+	private static Logger logger = LoggerFactory.getLogger(AuthService.class);
 
 	private static final String AUTH_URL = "https://kauth.kakao.com/oauth/token";
+	private static String authToken;
+
+	private static void setAuthToken(String authToken) {
+		AuthService.authToken = authToken;
+	}
+
+	public static String getAuthToken() {
+		return authToken;
+	}
 
 	@Autowired MessageSource msgSource;
 
-	public String getAuth(String code) {
+	public boolean setAuth(String code) {
 		Map<String, String> header = new HashMap<>();
 		Map<String, String> parameters = new HashMap<>();
-		String body = "";//a
-		String authToken = "";
+		String body = "";
+		String accessToken = "";
 		String tokenFailMsg = msgSource.getMessage("token.issued.fail", null, Locale.getDefault());
 		String tokenSuccessMsg = msgSource.getMessage("token.issued.success", null, Locale.getDefault());
 
-		ResponseEntity<String> response;
 
-		header.put("appType", "x-www-form-urlencoded;charset=UTF-8");
+		header.put("appType", APP_TYPE_URL_ENCODED);
 
 		parameters.put("code", code);
 		parameters.put("grant_type", msgSource.getMessage("grant_type",null, Locale.getDefault()));
@@ -56,21 +64,18 @@ public class AuthCallBackService extends HttpCallService {
 
 		HttpEntity<?> requestEntity = httpClientEntity(header, body);
 
-		try {
-			logger.info("======================== Auth Request Start ========================");
-			response = httpRequest(AUTH_URL, HttpMethod.POST, requestEntity);
-        	JSONObject jsonData = new JSONObject(response.getBody());
-        	authToken = jsonData.get("access_token").toString();
-        	if(StringUtils.isEmpty(authToken)) {
-        		throw new ServiceException(tokenFailMsg);
-        	}
-			logger.info(tokenSuccessMsg);
-        	logger.info("======================== Auth Request End ========================");
+		logger.info("======================== Auth Request Start ========================");
+		ResponseEntity<String> response = httpRequest(AUTH_URL, HttpMethod.POST, requestEntity);
+        JSONObject jsonData = new JSONObject(response.getBody());
+        accessToken = jsonData.get("access_token").toString();
+        if(StringUtils.isEmpty(accessToken)) {
+        	throw new ServiceException(tokenFailMsg);
+        }
+        setAuthToken(accessToken);
+		logger.info(tokenSuccessMsg);
+        logger.info("======================== Auth Request End ========================");
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return authToken;
+		return true;
 	}
 
 }

@@ -14,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.larn.alarm.base.dto.DefaultMessageDto;
 import com.larn.alarm.exception.ServiceException;
 
 @Service
@@ -24,15 +25,14 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
 
 	@Autowired MessageSource msgSource;
 
-	public String sendMessage(String accessToken) {
+	public String sendMessage(String accessToken, DefaultMessageDto msgDto) {
 		ResponseEntity<String> response;
 		String successMsg = msgSource.getMessage("msg.send.success", null, Locale.getDefault());
 		String failMsg = msgSource.getMessage("msg.send.fail", null, Locale.getDefault());
-		String appType = "x-www-form-urlencoded;charset=UTF-8";
 		String linkUrl = "https://developers.kakao.com";
 
 		Map<String, String> header = new HashMap<>();
-		header.put("appType", appType);
+		header.put("appType", APP_TYPE_URL_ENCODED);
 		header.put("token", accessToken);
 
     	JSONObject linkObj = new JSONObject();
@@ -40,10 +40,10 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
     	linkObj.put("mobile_web_url", linkUrl);
 
     	JSONObject templateObj = new JSONObject();
-    	templateObj.put("object_type", "text");
-    	templateObj.put("text", "하이하이");
+    	templateObj.put("object_type", msgDto.getObjType());
+    	templateObj.put("text", msgDto.getText());
     	templateObj.put("link", linkObj);
-    	templateObj.put("button_title", "버튼입니다.");
+    	templateObj.put("button_title", msgDto.getBtnTitle());
 
     	Map<String,String> parameters = new HashMap<>();
     	parameters.put("template_object", "");
@@ -55,20 +55,16 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
 
     	logger.info("send parameter ====> {}", body);
     	HttpEntity<?> messageRequestEntity = httpClientEntity(header, body);
-        try {
-        	String resultCode = "";
-        	response = httpRequest(MSG_SEND_SERVICE_URL, HttpMethod.POST, messageRequestEntity);
-        	logger.info("SendMessageResponse======>{}", response.getBody());
-        	JSONObject jsonData = new JSONObject(response.getBody());
-        	resultCode = jsonData.get("result_code").toString();
-        	if(resultCode.equals(SUCCESS_CODE)) {
-            	return successMsg;
-        	}else {
-        		throw new ServiceException(failMsg);
-        	}
-        }catch (Exception e) {
-        	e.getStackTrace();
-		}
-        return failMsg;
+
+        String resultCode = "";
+        response = httpRequest(MSG_SEND_SERVICE_URL, HttpMethod.POST, messageRequestEntity);
+        logger.info("SendMessageResponse======>{}", response.getBody());
+        JSONObject jsonData = new JSONObject(response.getBody()); // 만료시간마다 리프레시하는 로직 추가 필요
+        resultCode = jsonData.get("result_code").toString();
+        if(resultCode.equals(SUCCESS_CODE)) {
+        	return successMsg;
+        }else {
+        	throw new ServiceException(failMsg);
+        }
 	}
 }
