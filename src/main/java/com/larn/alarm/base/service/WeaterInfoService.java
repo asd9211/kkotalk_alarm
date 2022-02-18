@@ -1,12 +1,11 @@
 package com.larn.alarm.base.service;
 
-import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpMethod;
@@ -42,7 +41,7 @@ public class WeaterInfoService extends HttpCallService {
 		System.out.println(builder.build(true).toUri());
     	WeaterInfoDto weaterInfoDto = new WeaterInfoDto();
         ResponseEntity<String> response = httpRequest(builder.build(true).toUri(), HttpMethod.GET, null);
-        //JSONObject jsonData = new JSONObject(response.getBody());
+        JSONObject jsonData = new JSONObject(response.getBody());
         System.out.println(response.getBody());
         return weaterInfoDto;
 	}
