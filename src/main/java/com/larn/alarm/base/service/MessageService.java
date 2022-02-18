@@ -29,7 +29,7 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
 		ResponseEntity<String> response;
 		String successMsg = msgSource.getMessage("msg.send.success", null, Locale.getDefault());
 		String failMsg = msgSource.getMessage("msg.send.fail", null, Locale.getDefault());
-		String linkUrl = "https://developers.kakao.com";
+		String linkUrl = "https://weather.naver.com/today";
 
 		Map<String, String> header = new HashMap<>();
 		header.put("appType", APP_TYPE_URL_ENCODED);
