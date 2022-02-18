@@ -42,6 +42,7 @@ public class WeaterInfoService extends HttpCallService {
     	WeaterInfoDto weaterInfoDto = new WeaterInfoDto();
         ResponseEntity<String> response = httpRequest(builder.build(true).toUri(), HttpMethod.GET, null);
         JSONObject jsonData = new JSONObject(response.getBody());
+        System.out.println(jsonData);
         return weaterInfoDto;
 	}
 }
