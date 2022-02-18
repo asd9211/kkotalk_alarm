@@ -28,3 +28,9 @@
   - Kakao API
   - weather API
   - ...
+
+- To DO
+  - 오늘의 주요 뉴스 배치 크롤링 (selenium) : 네이버 API에서 daily headline 미제공으로 인한 크롤링처리
+  - 날씨에 따른 점심 메뉴 추천
+  - ...
+ 
