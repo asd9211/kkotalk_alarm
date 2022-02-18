@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.larn.alarm.base.service.AuthService;
-import com.larn.alarm.base.service.MessageService;
+import com.larn.alarm.message.service.MessageService;
 
 @RestController
 public class BaseController {

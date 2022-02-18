@@ -1,4 +1,4 @@
-package com.larn.alarm.base.service;
+package com.larn.alarm.weather.service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -14,8 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.larn.alarm.base.dto.WeatherInfoDto;
+import com.larn.alarm.base.service.HttpCallService;
 import com.larn.alarm.exception.ServiceException;
+import com.larn.alarm.weather.dto.WeatherInfoDto;
 
 @Service
 public class WeaterInfoService extends HttpCallService {

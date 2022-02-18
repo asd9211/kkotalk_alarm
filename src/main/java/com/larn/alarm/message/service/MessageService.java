@@ -1,4 +1,4 @@
-package com.larn.alarm.base.service;
+package com.larn.alarm.message.service;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -14,8 +14,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.larn.alarm.base.dto.DefaultMessageDto;
+import com.larn.alarm.base.service.HttpCallService;
 import com.larn.alarm.exception.ServiceException;
+import com.larn.alarm.message.dto.DefaultMessageDto;
 
 @Service
 public class MessageService extends HttpCallService{ //확장포인트에 따라 인터페이스로 구현 고민
@@ -26,18 +27,17 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
 	@Autowired MessageSource msgSource;
 
 	public String sendMessage(String accessToken, DefaultMessageDto msgDto) {
-		ResponseEntity<String> response;
 		String successMsg = msgSource.getMessage("msg.send.success", null, Locale.getDefault());
 		String failMsg = msgSource.getMessage("msg.send.fail", null, Locale.getDefault());
-		String linkUrl = "https://weather.naver.com/today";
 
 		Map<String, String> header = new HashMap<>();
 		header.put("appType", APP_TYPE_URL_ENCODED);
 		header.put("token", accessToken);
 
+
     	JSONObject linkObj = new JSONObject();
-    	linkObj.put("web_url", linkUrl);
-    	linkObj.put("mobile_web_url", linkUrl);
+    	linkObj.put("web_url", msgDto.getWebUrl());
+    	linkObj.put("mobile_web_url", msgDto.getMobileUrl());
 
     	JSONObject templateObj = new JSONObject();
     	templateObj.put("object_type", msgDto.getObjType());
@@ -57,7 +57,7 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
     	HttpEntity<?> messageRequestEntity = httpClientEntity(header, body);
 
         String resultCode = "";
-        response = httpRequest(MSG_SEND_SERVICE_URL, HttpMethod.POST, messageRequestEntity);
+        ResponseEntity<String> response = httpRequest(MSG_SEND_SERVICE_URL, HttpMethod.POST, messageRequestEntity);
         logger.info("SendMessageResponse======>{}", response.getBody());
         JSONObject jsonData = new JSONObject(response.getBody()); // 만료시간마다 리프레시하는 로직 추가 필요
         resultCode = jsonData.get("result_code").toString();

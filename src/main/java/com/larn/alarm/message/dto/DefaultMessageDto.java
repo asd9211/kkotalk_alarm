@@ -1,4 +1,6 @@
-package com.larn.alarm.base.dto;
+package com.larn.alarm.message.dto;
+
+import java.util.Map;
 
 import lombok.Data;
 
@@ -6,7 +8,9 @@ import lombok.Data;
 public class DefaultMessageDto {
 	private String objType;
 	private String text;
-	private String link;
+	private String webUrl;
+	private String mobileUrl;
 	private String btnTitle;
+
 
 }

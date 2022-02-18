@@ -1,4 +1,4 @@
-package com.larn.alarm.base.dto;
+package com.larn.alarm.weather.dto;
 
 import lombok.Data;
 
