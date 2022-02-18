@@ -34,9 +34,14 @@ public class WeaterInfoService extends HttpCallService {
 		String dataType = "json";
 
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(WHEATER_INFO_API_URL)
-				.queryParam("serviceKey", apiKey).queryParam("numOfRows", rows).queryParam("pageNo", pageNo)
-				.queryParam("base_date", todayDate).queryParam("base_time", baseTime).queryParam("nx", "55")
-				.queryParam("ny", "127").queryParam("dataType", dataType);
+				.queryParam("serviceKey", apiKey)
+				.queryParam("numOfRows", rows)
+				.queryParam("pageNo", pageNo)
+				.queryParam("base_date", todayDate)
+				.queryParam("base_time", baseTime)
+				.queryParam("nx", "55")
+				.queryParam("ny", "127")
+				.queryParam("dataType", dataType);
 
 		WeatherInfoDto weaterInfoDto = new WeatherInfoDto();
 		ResponseEntity<String> response = httpRequest(builder.build(true).toUri(), HttpMethod.GET, null);

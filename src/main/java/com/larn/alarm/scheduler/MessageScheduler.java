@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.larn.alarm.base.service.AuthService;
 import com.larn.alarm.exception.ServiceException;
+import com.larn.alarm.food.service.FoodInfoService;
 import com.larn.alarm.message.dto.DefaultMessageDto;
 import com.larn.alarm.message.service.MessageService;
 import com.larn.alarm.utils.StringUtils;
@@ -24,8 +25,11 @@ public class MessageScheduler {
 	@Autowired
 	WeaterInfoService weaterInfoService;
 
+	@Autowired
+	FoodInfoService foodInfoService;
+
 	//@Scheduled(cron="0 00 07 * * ?")
-	@Scheduled(fixedRate = 5000)
+	//@Scheduled(fixedRate = 5000)
     public void morningWeatherInfoScheduler() { // 아침 날씨 알람 스케쥴러
 		String linkUrl = "https://weather.naver.com/today";
 		String authToken = AuthService.getAuthToken();
@@ -83,5 +87,10 @@ public class MessageScheduler {
 		}else {
 			throw new ServiceException("토큰정보가 없습니다!");
 		}
+	}
+
+	@Scheduled(fixedRate = 5000)
+	public void testScheduler() {
+		foodInfoService.getFoodInfoForWeather("test");
 	}
 }

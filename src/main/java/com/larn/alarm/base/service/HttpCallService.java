@@ -32,6 +32,15 @@ public class HttpCallService {
             return new HttpEntity<Object>(params, requestHeaders);
     }
 
+    public HttpEntity<?> httpClientEntity(HttpHeaders header, String params) {
+    	HttpHeaders requestHeaders = header;
+
+        if ( "".equals(params) )
+            return new HttpEntity<Object>(requestHeaders);
+        else
+            return new HttpEntity<Object>(params, requestHeaders);
+    }
+
     public ResponseEntity<String> httpRequest(String url, HttpMethod method, HttpEntity<?> entity){
 		RestTemplate restTemplate = new RestTemplate();
     	return restTemplate.exchange(url, method, entity,String.class);

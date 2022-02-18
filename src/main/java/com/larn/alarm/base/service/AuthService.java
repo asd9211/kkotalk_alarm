@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,15 +38,14 @@ public class AuthService extends HttpCallService {
 	@Autowired MessageSource msgSource;
 
 	public boolean setAuth(String code) {
-		Map<String, String> header = new HashMap<>();
+		HttpHeaders header = new HttpHeaders();
 		Map<String, String> parameters = new HashMap<>();
 		String body = "";
 		String accessToken = "";
 		String tokenFailMsg = msgSource.getMessage("token.issued.fail", null, Locale.getDefault());
 		String tokenSuccessMsg = msgSource.getMessage("token.issued.success", null, Locale.getDefault());
 
-
-		header.put("appType", APP_TYPE_URL_ENCODED);
+		header.set("Content-Type", "application/" + APP_TYPE_URL_ENCODED);
 
 		parameters.put("code", code);
 		parameters.put("grant_type", msgSource.getMessage("grant_type",null, Locale.getDefault()));

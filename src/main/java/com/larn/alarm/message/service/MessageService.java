@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,9 +31,9 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
 		String successMsg = msgSource.getMessage("msg.send.success", null, Locale.getDefault());
 		String failMsg = msgSource.getMessage("msg.send.fail", null, Locale.getDefault());
 
-		Map<String, String> header = new HashMap<>();
-		header.put("appType", APP_TYPE_URL_ENCODED);
-		header.put("token", accessToken);
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Type", "application/" + APP_TYPE_URL_ENCODED);
+		header.set("Authorization", "Bearer " + accessToken);
 
 
     	JSONObject linkObj = new JSONObject();
