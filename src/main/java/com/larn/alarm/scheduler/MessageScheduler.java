@@ -89,8 +89,8 @@ public class MessageScheduler {
 		}
 	}
 
-	@Scheduled(fixedRate = 5000)
+	@Scheduled(fixedRate = 10000)
 	public void testScheduler() {
-		foodInfoService.getFoodInfoForWeather("test");
+		msgService.sendListMessage(foodInfoService.getFoodInfoForWeather("test"));
 	}
 }

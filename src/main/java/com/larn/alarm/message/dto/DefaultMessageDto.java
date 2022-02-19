@@ -1,7 +1,5 @@
 package com.larn.alarm.message.dto;
 
-import java.util.Map;
-
 import lombok.Data;
 
 @Data

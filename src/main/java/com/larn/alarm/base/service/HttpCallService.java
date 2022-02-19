@@ -32,10 +32,10 @@ public class HttpCallService {
             return new HttpEntity<Object>(params, requestHeaders);
     }
 
-    public HttpEntity<?> httpClientEntity(HttpHeaders header, String params) {
+    public HttpEntity<?> httpClientEntity(HttpHeaders header, Object params) {
     	HttpHeaders requestHeaders = header;
 
-        if ( "".equals(params) )
+        if ( "".equals(params) || params == null )
             return new HttpEntity<Object>(requestHeaders);
         else
             return new HttpEntity<Object>(params, requestHeaders);

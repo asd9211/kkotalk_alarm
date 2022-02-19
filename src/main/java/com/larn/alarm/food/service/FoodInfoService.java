@@ -1,8 +1,9 @@
 package com.larn.alarm.food.service;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,87 +16,57 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.larn.alarm.base.service.AuthService;
 import com.larn.alarm.base.service.HttpCallService;
-import com.larn.alarm.exception.ServiceException;
+import com.larn.alarm.message.dto.ListMessageDto;
 
 @Service
-public class FoodInfoService extends HttpCallService{
+public class FoodInfoService extends HttpCallService {
 	private static final String NAVER_SEARCH_URL = "https://openapi.naver.com/v1/search/local.json?";
-	private static final String MSG_SEND_SERVICE_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
-	@Autowired MessageSource msgSource;
+	@Autowired
+	MessageSource msgSource;
 
-
-	public String getFoodInfoForWeather(String weatherCode) {
+	public ListMessageDto getFoodInfoForWeather(String weatherCode) {
 		String cliendId = msgSource.getMessage("naver.api.client_id", null, Locale.getDefault());
 		String cliendSecret = msgSource.getMessage("naver.api.client_secret", null, Locale.getDefault());
+		String[] rainyMenu = { "김치전", "칼국수", "부대찌개", "국수", "해물파전", "삼계탕", "설렁탕", "국물요리" }; // 나중에 DB에서 관리
+		int maxItemLength = 3 ;
+		
+		ListMessageDto msgDto = new ListMessageDto();
+		List<ListMessageDto> msgDtoItemList = new ArrayList<>();
+		
+		for (int i = 0; i < maxItemLength; i++) {
+			int idx = new Random().nextInt(rainyMenu.length);
 
-		HttpHeaders header = new HttpHeaders();
-		header.set("X-Naver-Client-Id", cliendId);
-		header.set("X-Naver-Client-Secret", cliendSecret);
-    	HttpEntity<?> searchRequestEntity = httpClientEntity(header, null);
+			HttpHeaders header = new HttpHeaders();
+			header.set("X-Naver-Client-Id", cliendId);
+			header.set("X-Naver-Client-Secret", cliendSecret);
+			HttpEntity<?> searchRequestEntity = httpClientEntity(header, null);
 
-    	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(NAVER_SEARCH_URL)
-				.queryParam("sort", "comment")
-				.queryParam("query", "종로역 설렁탕 맛집")
-				.queryParam("display", "5");
+			UriComponentsBuilder builder = UriComponentsBuilder
+					.fromHttpUrl(NAVER_SEARCH_URL)
+					.queryParam("sort", "comment")
+					.queryParam("query", rainyMenu[idx])
+					.queryParam("display", "1");
 
-		ResponseEntity<String> response = httpRequest(builder.build().toUriString(), HttpMethod.GET, searchRequestEntity);
-		JSONObject jsonData = new JSONObject(response.getBody());
-		JSONArray items = (JSONArray)jsonData.get("items");
-
-	 	JSONObject linkObj = new JSONObject();
-    	linkObj.put("web_url", "");
-    	linkObj.put("mobile_web_url", "");
-
-    	JSONArray contentsArray = new JSONArray();
-
-    	for(int i = 0 ; i < 5 ; i++) {
-        	JSONObject contentsObj = new JSONObject();
-	    	contentsObj.put("title", "곰탕집");
-	    	contentsObj.put("description", "주소");
-	    	contentsObj.put("image_url", "곰탕집");
-	    	contentsObj.put("image_width", "50");
-	    	contentsObj.put("image_height", "50");
-	    	contentsObj.put("link", linkObj);
-	    	contentsArray.put(contentsObj);
-	    }
-
-    	JSONObject templateObj = new JSONObject();
-    	templateObj.put("object_type", "list");
-    	templateObj.put("header_title", "맛집 추천");
-    	templateObj.put("header_link", linkObj);
-    	templateObj.put("contents", contentsArray);
-
-    	Map<String,String> parameters = new HashMap<>();
-    	parameters.put("template_object", "");
-    	String body = "";
-
-    	for(String key : parameters.keySet()) {
-        	body += key + "=" + templateObj.toString();
-        }
-
-    	// 서비스 따로 태워야 함. 임시.
-    	header = new HttpHeaders();
-    	header.set("Content-Type", "application/" + APP_TYPE_URL_ENCODED);
- 		header.set("Authorization", "Bearer " + AuthService.getAuthToken());
-
- 		HttpEntity<?> messageRequestEntity = httpClientEntity(header, body);
-        ResponseEntity<String> res = httpRequest(MSG_SEND_SERVICE_URL, HttpMethod.POST, messageRequestEntity);
-        System.out.println(res.getBody().toString());
-
-		if (items.length() == 0)
-			throw new ServiceException("네이버 검색 API에서 정보를 받는데 실패했습니다.");
-
-		for (Object item : items) {
-			JSONObject itemObj = (JSONObject) item;
-			String title = itemObj.get("title").toString();
-			String address = itemObj.get("roadAddress").toString();
-			String category = itemObj.get("category").toString();
-
+			ResponseEntity<String> response = httpRequest(builder.build().toUriString(), HttpMethod.GET, searchRequestEntity);
+			JSONObject jsonData = new JSONObject(response.getBody());
+			JSONArray items = (JSONArray) jsonData.get("items");
+			
+			for (Object item : items) {
+				ListMessageDto msgDtoItem = new ListMessageDto();
+				JSONObject itemObj = (JSONObject) item;
+				msgDtoItem.setTitle(itemObj.getString("title").toString());
+				msgDtoItem.setDescription(
+						"주소 : " + itemObj.getString("address") + " 전화번호 : " + itemObj.getString("telephone"));
+				msgDtoItem.setImageUrl("https://freesvg.org/img/bentolunch.png?w=150&h=150&fit=fill");
+				msgDtoItem.setImageWidth("50");
+				msgDtoItem.setImageHeight("50");
+				msgDtoItemList.add(msgDtoItem);
+			}
 		}
-		System.out.println(jsonData.toString());
-		return null;
+		msgDto.setDtoList(msgDtoItemList);
+
+		return msgDto;
 	}
 }

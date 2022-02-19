@@ -68,6 +68,7 @@ public class AuthService extends HttpCallService {
 		ResponseEntity<String> response = httpRequest(AUTH_URL, HttpMethod.POST, requestEntity);
         JSONObject jsonData = new JSONObject(response.getBody());
         accessToken = jsonData.get("access_token").toString();
+        System.out.println(accessToken);
         if(StringUtils.isEmpty(accessToken)) {
         	throw new ServiceException(tokenFailMsg);
         }
