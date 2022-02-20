@@ -22,7 +22,7 @@ import com.larn.alarm.utils.StringUtils;
 
 @Service
 public class AuthService extends HttpCallService {
-	private static Logger logger = LoggerFactory.getLogger(AuthService.class);
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private static final String AUTH_URL = "https://kauth.kakao.com/oauth/token";
 	private static String authToken;

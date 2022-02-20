@@ -1,8 +1,11 @@
 package com.larn.alarm.scheduler;
 
+import java.util.Locale;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +13,7 @@ import com.larn.alarm.base.service.AuthService;
 import com.larn.alarm.exception.ServiceException;
 import com.larn.alarm.food.service.FoodInfoService;
 import com.larn.alarm.message.dto.DefaultMessageDto;
+import com.larn.alarm.message.dto.ListMessageDto;
 import com.larn.alarm.message.service.MessageService;
 import com.larn.alarm.utils.StringUtils;
 import com.larn.alarm.weather.dto.WeatherInfoDto;
@@ -17,10 +21,12 @@ import com.larn.alarm.weather.service.WeaterInfoService;
 
 @Component
 public class MessageScheduler {
-	private static Logger logger = LoggerFactory.getLogger(MessageScheduler.class);
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	MessageService msgService;
+
+	@Autowired MessageSource msgSource;
 
 	@Autowired
 	WeaterInfoService weaterInfoService;
@@ -64,7 +70,7 @@ public class MessageScheduler {
 
 			msgService.sendMessage(authToken, msgDto);
 		}else {
-			throw new ServiceException("토큰정보가 없습니다!");
+			throw new ServiceException(msgSource.getMessage("token.info.notfound", null, Locale.getDefault()));
 		}
 
 	}
@@ -85,12 +91,14 @@ public class MessageScheduler {
 
 			msgService.sendMessage(authToken, msgDto);
 		}else {
-			throw new ServiceException("토큰정보가 없습니다!");
+			throw new ServiceException(msgSource.getMessage("token.info.notfound", null, Locale.getDefault()));
 		}
 	}
 
 	@Scheduled(fixedRate = 10000)
 	public void testScheduler() {
-		msgService.sendListMessage(foodInfoService.getFoodInfoForWeather("test"));
+		String authToken = AuthService.getAuthToken();
+		ListMessageDto msgDto = foodInfoService.getFoodInfoForWeather("test"); //FoodInfo를 messageDto형태로 return하는게 올바른지 고민필요.
+		msgService.sendListMessage(authToken, msgDto);
 	}
 }

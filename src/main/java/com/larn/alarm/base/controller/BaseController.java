@@ -15,7 +15,7 @@ import com.larn.alarm.message.service.MessageService;
 
 @RestController
 public class BaseController {
-	private static Logger logger = LoggerFactory.getLogger(BaseController.class);
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	AuthService authService;

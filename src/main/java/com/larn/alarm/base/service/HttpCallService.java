@@ -11,41 +11,55 @@ import org.springframework.web.client.RestTemplate;
 
 import com.larn.alarm.utils.StringUtils;
 
+
+/**
+* RestTemplate를 통해 HttpService를 담당하는 Class
+* @author larn
+* @version 1.0
+* @see None
+*/
 public class HttpCallService {
 	protected static final String APP_TYPE_URL_ENCODED = "x-www-form-urlencoded;charset=UTF-8";
 	protected static final String APP_TYPE_JSON = "json;charset=UTF-8";
 
-    public HttpEntity<?> httpClientEntity(Map<String,String> header, String params) {
-    	HttpHeaders requestHeaders = new HttpHeaders();
-
-        if(!StringUtils.isEmpty(header.get("appType"))) {
-	        requestHeaders.set("Content-Type", "application/" + header.get("appType"));
-        }
-
-        if(!StringUtils.isEmpty(header.get("token"))) {
-	        requestHeaders.set("Authorization", "Bearer " + header.get("token"));
-        }
-
-        if ( "".equals(params) )
-            return new HttpEntity<Object>(requestHeaders);
-        else
-            return new HttpEntity<Object>(params, requestHeaders);
-    }
-
+	/**
+	* Http 요청 클라이언트 객체 생성 method
+	* 
+	* @ param Map<String,String> header HttpHeader 정보
+	* @ param Object params HttpBody 정보
+	* @ return HttpEntity 생성된 HttpClient객체 정보 반환
+	* @ exception 예외사항
+	*/
     public HttpEntity<?> httpClientEntity(HttpHeaders header, Object params) {
     	HttpHeaders requestHeaders = header;
 
-        if ( "".equals(params) || params == null )
+        if (params == null || "".equals(params))
             return new HttpEntity<Object>(requestHeaders);
         else
             return new HttpEntity<Object>(params, requestHeaders);
     }
-
+    
+	/**
+	* Http 요청 method
+	* 
+	* @ param String url 요청 URL 정보
+	* @ param HttpMethod method 요청 Method 정보
+	* @ param  HttpEntity<?> entity 요청 EntityClient 객체 정보
+	* @ return HttpEntity 생성된 HttpClient객체 정보 반환
+	*/
     public ResponseEntity<String> httpRequest(String url, HttpMethod method, HttpEntity<?> entity){
 		RestTemplate restTemplate = new RestTemplate();
     	return restTemplate.exchange(url, method, entity,String.class);
     }
-
+    
+    /**
+	* Http 요청 method
+	* 
+	* @ param URI url 요청 URL 정보
+	* @ param HttpMethod method 요청 Method 정보
+	* @ param  HttpEntity<?> entity 요청 EntityClient 객체 정보
+	* @ return HttpEntity 생성된 HttpClient객체 정보 반환
+	*/
     public ResponseEntity<String> httpRequest(URI url, HttpMethod method, HttpEntity<?> entity){
 		RestTemplate restTemplate = new RestTemplate();
     	return restTemplate.exchange(url, method, entity,String.class);
