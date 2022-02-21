@@ -97,8 +97,10 @@ public class MessageScheduler {
 
 	@Scheduled(fixedRate = 10000)
 	public void testScheduler() {
+		WeatherInfoDto weatherInfoDto = weaterInfoService.getWeatherInfo();
+		String weatherStatus = weatherInfoDto.getWeatherStatus();
 		String authToken = AuthService.getAuthToken();
-		ListMessageDto msgDto = foodInfoService.getFoodInfoForWeather("test"); //FoodInfo를 messageDto형태로 return하는게 올바른지 고민필요.
+		ListMessageDto msgDto = foodInfoService.getFoodInfoForWeather(weatherStatus); //FoodInfo를 messageDto형태로 return하는게 올바른지 고민필요.
 		msgService.sendListMessage(authToken, msgDto);
 	}
 }

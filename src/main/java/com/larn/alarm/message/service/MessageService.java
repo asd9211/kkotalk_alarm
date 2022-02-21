@@ -33,7 +33,7 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
 	public boolean sendMessage(String accessToken, DefaultMessageDto msgDto) {
 		String failMsg = msgSource.getMessage("msg.send.fail", null, Locale.getDefault());
 
-		    	JSONObject linkObj = new JSONObject();
+		JSONObject linkObj = new JSONObject();
     	linkObj.put("web_url", msgDto.getWebUrl());
     	linkObj.put("mobile_web_url", msgDto.getMobileUrl());
 
@@ -66,14 +66,17 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
 	}
 	
 	public boolean sendListMessage(String accessToken, ListMessageDto msgDto) {
-		
-	 	JSONObject linkObj = new JSONObject();
-    	linkObj.put("web_url", "");
-    	linkObj.put("mobile_web_url", "");
-
+		JSONObject headerLinkObj = new JSONObject();
+		headerLinkObj.put("web_url", "");
+		headerLinkObj.put("mobile_web_url", "");
+    	
     	JSONArray contentsArray = new JSONArray();
 
     	for(ListMessageDto dto : msgDto.getDtoList()) {
+    	 	JSONObject linkObj = new JSONObject();
+        	linkObj.put("web_url", dto.getWebUrl());
+        	linkObj.put("mobile_web_url", dto.getMobileUrl());
+        	
         	JSONObject contentsObj = new JSONObject();
 	    	contentsObj.put("title", dto.getTitle());
 	    	contentsObj.put("description", dto.getDescription());
@@ -87,7 +90,7 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
     	JSONObject templateObj = new JSONObject();
     	templateObj.put("object_type", "list");
     	templateObj.put("header_title", "맛집 추천");
-    	templateObj.put("header_link", linkObj);
+    	templateObj.put("header_link", headerLinkObj);
     	templateObj.put("contents", contentsArray);
 
     	HttpHeaders header = new HttpHeaders();
