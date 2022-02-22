@@ -1,7 +1,10 @@
 package com.larn.alarm.scheduler;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +14,8 @@ import org.springframework.stereotype.Component;
 
 import com.larn.alarm.base.service.AuthService;
 import com.larn.alarm.exception.ServiceException;
-import com.larn.alarm.food.service.FoodInfoService;
+import com.larn.alarm.food.dto.RestaurantInfoDto;
+import com.larn.alarm.food.service.RestaurantInfoService;
 import com.larn.alarm.message.dto.DefaultMessageDto;
 import com.larn.alarm.message.dto.ListMessageDto;
 import com.larn.alarm.message.service.MessageService;
@@ -32,10 +36,13 @@ public class MessageScheduler {
 	WeaterInfoService weaterInfoService;
 
 	@Autowired
-	FoodInfoService foodInfoService;
+	RestaurantInfoService restaurantInfoService;
+
+	@Autowired
+	AuthService authService;
 
 	//@Scheduled(cron="0 00 07 * * ?")
-	//@Scheduled(fixedRate = 5000)
+	//@Scheduled(fixedRate = 10000)
     public void morningWeatherInfoScheduler() { // 아침 날씨 알람 스케쥴러
 		String linkUrl = "https://weather.naver.com/today";
 		String authToken = AuthService.getAuthToken();
@@ -75,8 +82,9 @@ public class MessageScheduler {
 
 	}
 
-	@Scheduled(cron="0 00 14 * * ?")
-	public void nutrientsAlarmScheduler() { // 영양제 알림 스케쥴러
+	//@Scheduled(cron="0 00 14 * * ?")
+	//@Scheduled(fixedRate = 10000)
+    public void nutrientsAlarmScheduler() { // 영양제 알림 스케쥴러
 		String linkUrl = "";
 		String authToken = AuthService.getAuthToken();
 		logger.info("==============nutrientsAlarmSceduler start=============="); // 추후 AOP로 Service Start 로그 관리
@@ -97,10 +105,41 @@ public class MessageScheduler {
 
 	@Scheduled(fixedRate = 10000)
 	public void testScheduler() {
+		String naverMapUrl = "https://map.naver.com/v5/search/";
+
+		String authToken = AuthService.getAuthToken();
 		WeatherInfoDto weatherInfoDto = weaterInfoService.getWeatherInfo();
 		String weatherStatus = weatherInfoDto.getWeatherStatus();
-		String authToken = AuthService.getAuthToken();
-		ListMessageDto msgDto = foodInfoService.getFoodInfoForWeather(weatherStatus); //FoodInfo를 messageDto형태로 return하는게 올바른지 고민필요.
+		List<ListMessageDto> msgDtoItemList = new ArrayList<>();
+		ListMessageDto msgDto = new ListMessageDto();
+		List<RestaurantInfoDto> restaurantsInfo = restaurantInfoService.getRestaurantInfoForWeather(weatherStatus);
+
+		msgDto.setHeaderTitle("오늘의 맛집 추천");
+		msgDto.setWebUrl(naverMapUrl);
+		msgDto.setMobileUrl(naverMapUrl);
+
+		for (RestaurantInfoDto restaurantInfo : restaurantsInfo) {
+			ListMessageDto msgDtoItem = new ListMessageDto();
+			String title = restaurantInfo.getTitle();
+
+			msgDtoItem.setTitle(title);
+			msgDtoItem.setDescription(restaurantInfo.getDescription());
+			msgDtoItem.setImageUrl(restaurantInfo.getImageUrl());
+			msgDtoItem.setImageWidth("50");
+			msgDtoItem.setImageHeight("50");
+			msgDtoItem.setWebUrl(naverMapUrl + title);	// 클릭시 naver 지도로 연결
+			msgDtoItem.setMobileUrl(naverMapUrl + title);
+			msgDtoItemList.add(msgDtoItem);
+		}
+		msgDto.setDtoList(msgDtoItemList);
+
 		msgService.sendListMessage(authToken, msgDto);
+	}
+
+
+	//6시간마다 토큰 리프레시
+	//@Scheduled(fixedRate = 5000)
+	public void tokenRefrashSchduler() {
+		authService.setAuthRefash();
 	}
 }
