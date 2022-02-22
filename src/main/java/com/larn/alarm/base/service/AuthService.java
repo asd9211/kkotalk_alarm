@@ -19,6 +19,12 @@ import com.larn.alarm.exception.ServiceException;
 import com.larn.alarm.utils.StringUtils;
 
 
+/**
+* kakao Api Auth를 담당하는 Class
+* @author larn
+* @version 1.0
+* @see None
+*/
 @Service
 public class AuthService extends HttpCallService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -45,6 +51,13 @@ public class AuthService extends HttpCallService {
 
 	@Autowired MessageSource msgSource;
 
+	/**
+	* kakao API 토큰 발급 method
+	*
+	* @ param String code kakao API에서 Return해주는 Code 정보
+	* @ return boolean 토큰 발급 Y/N
+	* @ exception 예외사항
+	*/
 	public boolean setAuth(String code) {
 		HttpHeaders header = new HttpHeaders();
 		String accessToken = "";
@@ -81,6 +94,13 @@ public class AuthService extends HttpCallService {
 		return true;
 	}
 
+	/**
+	* kakao API 토큰 Refrash method
+	*
+	* @ param
+	* @ return boolean 토큰 Refrash Y/N
+	* @ exception 예외사항
+	*/
 	public boolean setAuthRefash() {
 		String accessToken = "";
 		String tokenFailMsg = msgSource.getMessage("token.issued.fail", null, Locale.getDefault());
