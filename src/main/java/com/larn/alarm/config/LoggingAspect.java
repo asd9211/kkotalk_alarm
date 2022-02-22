@@ -14,22 +14,23 @@ import org.springframework.util.StopWatch;
 public class LoggingAspect {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	// PointCut : 적용할 지점 또는 범위 선택
 	@Pointcut("execution(public * com.larn.alarm.*.service..*(..))")
-	private void publicTarget() { }
+	private void serviceTarget() { }
 
-	@Around("publicTarget()")
+	@Around("serviceTarget()")
 	public Object serviceStartAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
-		String className = joinPoint.getClass().getName();
+		Object target = joinPoint.getTarget();
+		String className = target.getClass().getName();
+
 		logger.info("=================================================");
 		logger.info(">>>>>>>>> LOGGING START >>>>>>>>>>");
-		logger.info("Class ===> {}", className);
+		logger.info("Class  ===> {}", className);
 		logger.info("Method ===> {}", joinPoint.getSignature().getName() + "()  START!!!");
 		StopWatch sw = new StopWatch(); sw.start(); // 비즈니스 로직 (메인 로직)
 		Object result = joinPoint.proceed();
 		sw.stop();
 		logger.info("소요시간: {} ms", sw.getLastTaskTimeMillis());
-		logger.info("Class ===> {}", className);
+		logger.info("Class  ===> {}", className);
 		logger.info("Method ===> {}", joinPoint.getSignature().getName() + "()  END!!!");
 		logger.info(">>>>>>>>>> LOGGING END >>>>>>>>>>");
 		logger.info("=================================================");
