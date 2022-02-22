@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class ListMessageDto {
 
+	private String headerTitle;
 	private String title;
 	private String description;
 	private String imageUrl;

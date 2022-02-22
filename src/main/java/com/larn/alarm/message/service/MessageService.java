@@ -43,14 +43,14 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
     	templateObj.put("link", linkObj);
     	templateObj.put("button_title", msgDto.getBtnTitle());
 
-    	
+
     	HttpHeaders header = new HttpHeaders();
-		header.set("Content-Type", "application/" + APP_TYPE_URL_ENCODED);
+		header.set("Content-Type", APP_TYPE_URL_ENCODED);
 		header.set("Authorization", "Bearer " + accessToken);
 
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
     	parameters.add("template_object", templateObj.toString());
-    	
+
     	HttpEntity<?> messageRequestEntity = httpClientEntity(header, parameters);
 
         String resultCode = "";
@@ -58,25 +58,28 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
         logger.info("SendMessageResponse======>{}", response.getBody());
         JSONObject jsonData = new JSONObject(response.getBody()); // 만료시간마다 리프레시하는 로직 추가 필요
         resultCode = jsonData.get("result_code").toString();
+
         if(resultCode.equals(SUCCESS_CODE)) {
         	return true;
         }else {
         	throw new ServiceException(failMsg);
         }
 	}
-	
+
 	public boolean sendListMessage(String accessToken, ListMessageDto msgDto) {
+		String failMsg = msgSource.getMessage("msg.send.fail", null, Locale.getDefault());
+
 		JSONObject headerLinkObj = new JSONObject();
-		headerLinkObj.put("web_url", "");
-		headerLinkObj.put("mobile_web_url", "");
-    	
+		headerLinkObj.put("web_url", msgDto.getWebUrl());
+		headerLinkObj.put("mobile_web_url", msgDto.getMobileUrl());
+
     	JSONArray contentsArray = new JSONArray();
 
     	for(ListMessageDto dto : msgDto.getDtoList()) {
     	 	JSONObject linkObj = new JSONObject();
         	linkObj.put("web_url", dto.getWebUrl());
         	linkObj.put("mobile_web_url", dto.getMobileUrl());
-        	
+
         	JSONObject contentsObj = new JSONObject();
 	    	contentsObj.put("title", dto.getTitle());
 	    	contentsObj.put("description", dto.getDescription());
@@ -89,24 +92,28 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
 
     	JSONObject templateObj = new JSONObject();
     	templateObj.put("object_type", "list");
-    	templateObj.put("header_title", "맛집 추천");
+    	templateObj.put("header_title", msgDto.getHeaderTitle());
     	templateObj.put("header_link", headerLinkObj);
     	templateObj.put("contents", contentsArray);
 
     	HttpHeaders header = new HttpHeaders();
-    	header.set("Content-Type", "application/" + APP_TYPE_URL_ENCODED);
+    	header.set("Content-Type", APP_TYPE_URL_ENCODED);
  		header.set("Authorization", "Bearer " + accessToken);
 
  		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
     	parameters.add("template_object", templateObj.toString());
-    	
- 		HttpEntity<?> messageRequestEntity = httpClientEntity(header, parameters);
- 		System.out.println(messageRequestEntity.getBody());
-        ResponseEntity<String> res = httpRequest(MSG_SEND_SERVICE_URL, HttpMethod.POST, messageRequestEntity);
-        
-        System.out.println(res.getBody().toString());
-        
-        return true;
 
+ 		HttpEntity<?> messageRequestEntity = httpClientEntity(header, parameters);
+
+ 		ResponseEntity<String> response = httpRequest(MSG_SEND_SERVICE_URL, HttpMethod.POST, messageRequestEntity);
+        logger.info("SendMessageResponse======>{}", response.getBody());
+        JSONObject jsonData = new JSONObject(response.getBody());
+        String resultCode = jsonData.get("result_code").toString();
+
+        if(resultCode.equals(SUCCESS_CODE)) {
+        	return true;
+        }else {
+        	throw new ServiceException(failMsg);
+        }
 	}
 }

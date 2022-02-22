@@ -19,12 +19,12 @@ import com.larn.alarm.utils.StringUtils;
 * @see None
 */
 public class HttpCallService {
-	protected static final String APP_TYPE_URL_ENCODED = "x-www-form-urlencoded;charset=UTF-8";
-	protected static final String APP_TYPE_JSON = "json;charset=UTF-8";
+	protected static final String APP_TYPE_URL_ENCODED = "application/x-www-form-urlencoded;charset=UTF-8";
+	protected static final String APP_TYPE_JSON = "application/json;charset=UTF-8";
 
 	/**
 	* Http 요청 클라이언트 객체 생성 method
-	* 
+	*
 	* @ param Map<String,String> header HttpHeader 정보
 	* @ param Object params HttpBody 정보
 	* @ return HttpEntity 생성된 HttpClient객체 정보 반환
@@ -38,10 +38,10 @@ public class HttpCallService {
         else
             return new HttpEntity<Object>(params, requestHeaders);
     }
-    
+
 	/**
 	* Http 요청 method
-	* 
+	*
 	* @ param String url 요청 URL 정보
 	* @ param HttpMethod method 요청 Method 정보
 	* @ param  HttpEntity<?> entity 요청 EntityClient 객체 정보
@@ -51,10 +51,10 @@ public class HttpCallService {
 		RestTemplate restTemplate = new RestTemplate();
     	return restTemplate.exchange(url, method, entity,String.class);
     }
-    
+
     /**
 	* Http 요청 method
-	* 
+	*
 	* @ param URI url 요청 URL 정보
 	* @ param HttpMethod method 요청 Method 정보
 	* @ param  HttpEntity<?> entity 요청 EntityClient 객체 정보
