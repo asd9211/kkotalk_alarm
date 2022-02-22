@@ -83,7 +83,7 @@ public class MessageScheduler {
 	}
 
 	//@Scheduled(cron="0 00 14 * * ?")
-	//@Scheduled(fixedRate = 10000)
+	@Scheduled(fixedRate = 10000)
     public void nutrientsAlarmScheduler() { // 영양제 알림 스케쥴러
 		String linkUrl = "";
 		String authToken = AuthService.getAuthToken();
@@ -104,7 +104,7 @@ public class MessageScheduler {
 	}
 
 	@Scheduled(fixedRate = 10000)
-	public void testScheduler() {
+	public void restaurantRecommandScheduler() {
 		String naverMapUrl = "https://map.naver.com/v5/search/";
 
 		String authToken = AuthService.getAuthToken();

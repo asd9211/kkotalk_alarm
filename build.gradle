@@ -18,7 +18,8 @@ dependencies {
 	//implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation group: 'org.json', name: 'json', version: '20210307'
-	// https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '2.6.2'
 	implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

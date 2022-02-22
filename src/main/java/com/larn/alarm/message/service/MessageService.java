@@ -55,7 +55,6 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
 
         String resultCode = "";
         ResponseEntity<String> response = httpRequest(MSG_SEND_SERVICE_URL, HttpMethod.POST, messageRequestEntity);
-        logger.info("SendMessageResponse======>{}", response.getBody());
         JSONObject jsonData = new JSONObject(response.getBody()); // 만료시간마다 리프레시하는 로직 추가 필요
         resultCode = jsonData.get("result_code").toString();
 
