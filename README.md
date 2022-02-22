@@ -39,5 +39,6 @@
   - 단위테스트 코드 추가
   - JPA 추가
   - H2 DB 연동
-  - 배포환경 고민. aws or azure
+  - Naver 지도 사용자 현재위치로  
+ - 배포환경 고민. aws or azure
  
