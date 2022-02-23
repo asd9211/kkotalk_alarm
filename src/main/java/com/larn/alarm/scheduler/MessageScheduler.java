@@ -22,7 +22,7 @@ import com.larn.alarm.restaurant.dto.RestaurantInfoDto;
 import com.larn.alarm.restaurant.service.RestaurantInfoService;
 import com.larn.alarm.utils.StringUtils;
 import com.larn.alarm.weather.dto.WeatherInfoDto;
-import com.larn.alarm.weather.service.WeaterInfoService;
+import com.larn.alarm.weather.service.WeatherInfoService;
 
 @Component
 public class MessageScheduler {
@@ -35,7 +35,7 @@ public class MessageScheduler {
 	MessageService msgService;
 
 	@Autowired
-	WeaterInfoService weaterInfoService;
+	WeatherInfoService weaterInfoService;
 
 	@Autowired
 	RestaurantInfoService restaurantInfoService;
@@ -46,8 +46,8 @@ public class MessageScheduler {
 	@Autowired
 	NewsService newsService;
 
-	@Scheduled(cron="0 00 07 * * ?")
-	//@Scheduled(fixedRate = 10000)
+	//@Scheduled(cron="0 00 07 * * ?")
+	@Scheduled(fixedRate = 10000)
     public void morningWeatherInfoScheduler() { // 아침 날씨 알람 스케쥴러
 		String linkUrl = "https://weather.naver.com/today";
 		String authToken = AuthService.getAuthToken();
@@ -107,7 +107,7 @@ public class MessageScheduler {
 	}
 
 	//@Scheduled(cron="0 00 11 * * ?")
-	@Scheduled(fixedRate = 10000)
+	//@Scheduled(fixedRate = 10000)
 	public void restaurantRecommandScheduler() {
 		String naverMapUrl = "https://map.naver.com/v5/search/";
 

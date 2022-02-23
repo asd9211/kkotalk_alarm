@@ -55,7 +55,7 @@ public class NewsService {
 				NewsInfoDto newsInfo = new NewsInfoDto();
 				try {
 					WebElement element = driver.findElementByXPath("//*[@id=\"main_content\"]/div/div[2]/div[1]/div["+k+"]/div["+((key.equals("100")) ? "1" : "2") +"]/ul/li[1]/div[2]/a");
-					newsInfo.setTitle("분야  : " +  value);
+					newsInfo.setTitle("분야 : " +  value);
 					newsInfo.setDescription(element.getText());
 					newsInfo.setUrl(element.getAttribute("href"));
 					newsInfoList.add(newsInfo);
