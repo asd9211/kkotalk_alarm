@@ -1,64 +1,67 @@
 package com.larn.alarm.news.service;
 
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
+import com.larn.alarm.news.dto.NewsInfoDto;
+
+@Service
 public class NewsService {
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public void getNewsInfo() {
+	public List<NewsInfoDto> getNewsInfo() {
 
-		Path path = Paths.get("C:\\drivers\\chromedriver.exe"); 
+		String naverNewsUrl = "https://news.naver.com/main/main.naver?";
+		Path path = Paths.get("src","main","resources","utils","chromedriver.exe");
 
 		System.setProperty("webdriver.chrome.driver", path.toString());
 
 		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--start-maximized"); 
-		options.addArguments("--disable-popup-blocking"); 
-		options.addArguments("--disable-default-apps"); 
+		options.addArguments("--start-maximized");
+		options.addArguments("--disable-popup-blocking");
+		options.addArguments("--disable-default-apps");
 
 		ChromeDriver driver = new ChromeDriver(options);
 
+		List<String> category = new ArrayList<>(
+				Arrays.asList( "정치", "경제", "사회", "생활문화", "세계", "과학"));
+		List<NewsInfoDto> newsInfoList = new ArrayList<>();
 		int sessionId = 100;
-		List<String> aList = new ArrayList<>();
-		aList.add("정치");
-		aList.add("경제");
-		aList.add("사회");
-		aList.add("생활문화");
-		aList.add("세계");
-		aList.add("과학");
-		
-		for (int i = 0; i < 6; i++) {
-		
-			driver.get("https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1="
-					+ sessionId);
+
+		for (int i = 0; i <= 5; i++) {
+			driver.get( naverNewsUrl + "mode=LSD&mid=shm&sid1=" + sessionId);
 			sessionId++;
-			List<WebElement> page1_title = driver.findElementsByClassName("cluster_text");
-			System.out.println("분야별 == > "+ aList.get(i)+ "   " + sessionId);
-			
-			int len = page1_title.size();
-			for (int j = 0; j < len; j++) {
-				System.out.println(page1_title.get(j).getText());
+			for(int k=1; k <= 3; k++) {
+				NewsInfoDto newsInfo = new NewsInfoDto();
+				try {
+					WebElement element = driver.findElementByXPath("//*[@id=\"main_content\"]/div/div[2]/div[1]/div["+k+"]/div["+((i == 0) ? "1" : "2") +"]/ul/li[1]/div[2]/a");
+					newsInfo.setTitle("분야  : " +  category.get(i));
+					newsInfo.setDescription(element.getText());
+					newsInfo.setUrl(element.getAttribute("href"));
+					newsInfoList.add(newsInfo);
+				}catch (Exception e) {
+					newsInfo.setTitle("뉴스 크롤링 error! 분야 : " + category.get(i));
+					newsInfo.setDescription(e.getMessage());
+					newsInfo.setUrl("");
+					newsInfoList.add(newsInfo);
+				}
+
 			}
 		}
-
 		driver.close();
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} finally {
-			driver.quit();
-		}
-	}
-	
-	public static void main(String[] args) {
-		NewsService ns = new NewsService();
-		ns.getNewsInfo();
+		driver.quit();
+		return newsInfoList;
 	}
 }

@@ -1,4 +1,4 @@
-package com.larn.alarm.food.service;
+package com.larn.alarm.restaurant.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.larn.alarm.base.service.HttpCallService;
-import com.larn.alarm.food.dto.RestaurantInfoDto;
 import com.larn.alarm.message.dto.ListMessageDto;
+import com.larn.alarm.restaurant.dto.RestaurantInfoDto;
 
 @Service
 public class RestaurantInfoService extends HttpCallService {

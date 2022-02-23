@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +13,13 @@ import org.springframework.stereotype.Component;
 
 import com.larn.alarm.base.service.AuthService;
 import com.larn.alarm.exception.ServiceException;
-import com.larn.alarm.food.dto.RestaurantInfoDto;
-import com.larn.alarm.food.service.RestaurantInfoService;
 import com.larn.alarm.message.dto.DefaultMessageDto;
 import com.larn.alarm.message.dto.ListMessageDto;
 import com.larn.alarm.message.service.MessageService;
+import com.larn.alarm.news.dto.NewsInfoDto;
+import com.larn.alarm.news.service.NewsService;
+import com.larn.alarm.restaurant.dto.RestaurantInfoDto;
+import com.larn.alarm.restaurant.service.RestaurantInfoService;
 import com.larn.alarm.utils.StringUtils;
 import com.larn.alarm.weather.dto.WeatherInfoDto;
 import com.larn.alarm.weather.service.WeaterInfoService;
@@ -28,9 +29,10 @@ public class MessageScheduler {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	MessageService msgService;
+	MessageSource msgSource;
 
-	@Autowired MessageSource msgSource;
+	@Autowired
+	MessageService msgService;
 
 	@Autowired
 	WeaterInfoService weaterInfoService;
@@ -41,12 +43,14 @@ public class MessageScheduler {
 	@Autowired
 	AuthService authService;
 
-	//@Scheduled(cron="0 00 07 * * ?")
+	@Autowired
+	NewsService newsService;
+
+	@Scheduled(cron="0 00 07 * * ?")
 	//@Scheduled(fixedRate = 10000)
     public void morningWeatherInfoScheduler() { // 아침 날씨 알람 스케쥴러
 		String linkUrl = "https://weather.naver.com/today";
 		String authToken = AuthService.getAuthToken();
-		logger.info("==============WeatherSceduler start=============="); // 추후 AOP로 Service Start 로그 관리
 		if(!StringUtils.isEmpty(authToken)) {
 			WeatherInfoDto weatherInfoDto = weaterInfoService.getWeatherInfo();
 			DefaultMessageDto msgDto = new DefaultMessageDto();
@@ -82,12 +86,11 @@ public class MessageScheduler {
 
 	}
 
-	//@Scheduled(cron="0 00 14 * * ?")
-	@Scheduled(fixedRate = 10000)
+	@Scheduled(cron="0 00 14 * * ?")
+	//@Scheduled(fixedRate = 10000)
     public void nutrientsAlarmScheduler() { // 영양제 알림 스케쥴러
 		String linkUrl = "";
 		String authToken = AuthService.getAuthToken();
-		logger.info("==============nutrientsAlarmSceduler start=============="); // 추후 AOP로 Service Start 로그 관리
 		if(!StringUtils.isEmpty(authToken)) {
 			DefaultMessageDto msgDto = new DefaultMessageDto();
 
@@ -103,7 +106,8 @@ public class MessageScheduler {
 		}
 	}
 
-	@Scheduled(fixedRate = 10000)
+	@Scheduled(cron="0 00 11 * * ?")
+	//@Scheduled(fixedRate = 10000)
 	public void restaurantRecommandScheduler() {
 		String naverMapUrl = "https://map.naver.com/v5/search/";
 
@@ -136,9 +140,42 @@ public class MessageScheduler {
 		msgService.sendListMessage(authToken, msgDto);
 	}
 
+	@Scheduled(cron="0 00 08 * * ?")
+	public void newsInfoScheduler() {
+		String naverNewsUrl = "https://news.naver.com/main/main.naver";
+		List<NewsInfoDto> newsInfoList = newsService.getNewsInfo();
+		String authToken = AuthService.getAuthToken();
+
+		ListMessageDto msgDto = new ListMessageDto();
+		msgDto.setHeaderTitle("오늘의 주요 뉴스");
+		msgDto.setWebUrl(naverNewsUrl);
+		msgDto.setMobileUrl(naverNewsUrl);
+
+		List<ListMessageDto> msgDtoItemList = new ArrayList<>();
+		int idx = 1;
+		for (NewsInfoDto newsInfo : newsInfoList) {
+			ListMessageDto msgDtoItem = new ListMessageDto();
+			String title = newsInfo.getTitle();
+
+			msgDtoItem.setTitle(title);
+			msgDtoItem.setDescription(newsInfo.getDescription());
+			msgDtoItem.setImageUrl("");
+			msgDtoItem.setImageWidth("50");
+			msgDtoItem.setImageHeight("50");
+			msgDtoItem.setWebUrl(newsInfo.getUrl());	// 클릭시 naver 지도로 연결
+			msgDtoItem.setMobileUrl(newsInfo.getUrl());
+			msgDtoItemList.add(msgDtoItem);
+			if(idx % 3 == 0) {
+				msgDto.setDtoList(msgDtoItemList);
+				msgService.sendListMessage(authToken, msgDto);
+				msgDtoItemList = new ArrayList<>();
+			}
+			idx ++;
+		}
+	}
 
 	//6시간마다 토큰 리프레시
-	//@Scheduled(fixedRate = 5000)
+	@Scheduled(fixedRate = 21500000)
 	public void tokenRefrashSchduler() {
 		authService.setAuthRefash();
 	}

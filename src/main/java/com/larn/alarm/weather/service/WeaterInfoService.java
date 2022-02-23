@@ -49,7 +49,7 @@ public class WeaterInfoService extends HttpCallService {
 
 		JSONArray items = jsonData.getJSONObject("response").getJSONObject("body").getJSONObject("items")
 				.getJSONArray("item");
-		if (items.length() == 0)
+		if (items.isEmpty())
 			throw new ServiceException("날씨 API에서 정보를 받는데 실패했습니다.");
 
 		for (Object item : items) {

@@ -1,4 +1,4 @@
-package com.larn.alarm.food.dto;
+package com.larn.alarm.restaurant.dto;
 
 import lombok.Data;
 
