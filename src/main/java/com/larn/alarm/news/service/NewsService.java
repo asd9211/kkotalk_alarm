@@ -3,8 +3,10 @@ package com.larn.alarm.news.service;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -20,7 +22,7 @@ public class NewsService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public List<NewsInfoDto> getNewsInfo() {
-
+		int maxNewsCount = 3;
 		String naverNewsUrl = "https://news.naver.com/main/main.naver?";
 		Path path = Paths.get("src","main","resources","utils","chromedriver.exe");
 
@@ -33,33 +35,40 @@ public class NewsService {
 
 		ChromeDriver driver = new ChromeDriver(options);
 
-		List<String> category = new ArrayList<>(
-				Arrays.asList( "정치", "경제", "사회", "생활문화", "세계", "과학"));
 		List<NewsInfoDto> newsInfoList = new ArrayList<>();
-		int sessionId = 100;
+		Map<String,String> category = new HashMap<>();
+		category.put("100", "정치");
+		category.put("101", "경제");
+		category.put("102", "사회");
+		category.put("103", "생활문화");
+		category.put("104", "세계");
+		category.put("105", "과학");
 
-		for (int i = 0; i <= 5; i++) {
-			String param = "mode=LSD&mid=shm&sid1=" + sessionId;
-			driver.get( naverNewsUrl + param);
+		for(Entry<String, String> entry : category.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+			String param = "mode=LSD&mid=shm&sid1=" + key;
 
-			for(int k=1; k <= 3; k++) {
+			driver.get(naverNewsUrl + param);
+
+			for(int k=1; k <= maxNewsCount; k++) {
 				NewsInfoDto newsInfo = new NewsInfoDto();
 				try {
-					WebElement element = driver.findElementByXPath("//*[@id=\"main_content\"]/div/div[2]/div[1]/div["+k+"]/div["+((i == 0) ? "1" : "2") +"]/ul/li[1]/div[2]/a");
-					newsInfo.setTitle("분야  : " +  category.get(i));
+					WebElement element = driver.findElementByXPath("//*[@id=\"main_content\"]/div/div[2]/div[1]/div["+k+"]/div["+((key.equals("100")) ? "1" : "2") +"]/ul/li[1]/div[2]/a");
+					newsInfo.setTitle("분야  : " +  value);
 					newsInfo.setDescription(element.getText());
 					newsInfo.setUrl(element.getAttribute("href"));
 					newsInfoList.add(newsInfo);
 				}catch (Exception e) {
-					newsInfo.setTitle("뉴스 크롤링 error! 분야 : " + category.get(i));
+					newsInfo.setTitle("뉴스 크롤링 error! 분야 : " + value);
 					newsInfo.setDescription(e.getMessage());
 					newsInfo.setUrl("");
 					newsInfoList.add(newsInfo);
 				}
 
 			}
-			sessionId++;
 		}
+
 		driver.close();
 		driver.quit();
 		return newsInfoList;

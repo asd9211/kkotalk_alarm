@@ -106,17 +106,17 @@ public class MessageScheduler {
 		}
 	}
 
-	@Scheduled(cron="0 00 11 * * ?")
-	//@Scheduled(fixedRate = 10000)
+	//@Scheduled(cron="0 00 11 * * ?")
+	@Scheduled(fixedRate = 10000)
 	public void restaurantRecommandScheduler() {
 		String naverMapUrl = "https://map.naver.com/v5/search/";
 
 		String authToken = AuthService.getAuthToken();
 		WeatherInfoDto weatherInfoDto = weaterInfoService.getWeatherInfo();
-		String weatherStatus = weatherInfoDto.getWeatherStatus();
+		String weatherCode = weatherInfoDto.getWeatherCode();
 		List<ListMessageDto> msgDtoItemList = new ArrayList<>();
 		ListMessageDto msgDto = new ListMessageDto();
-		List<RestaurantInfoDto> restaurantsInfo = restaurantInfoService.getRestaurantInfoForWeather(weatherStatus);
+		List<RestaurantInfoDto> restaurantsInfo = restaurantInfoService.getRestaurantInfoForWeather(weatherCode);
 
 		msgDto.setHeaderTitle("오늘의 맛집 추천");
 		msgDto.setWebUrl(naverMapUrl);
@@ -140,7 +140,8 @@ public class MessageScheduler {
 		msgService.sendListMessage(authToken, msgDto);
 	}
 
-	@Scheduled(cron="0 00 08 * * ?")
+	//@Scheduled(cron="0 00 08 * * ?")
+	//@Scheduled(fixedRate = 30000)
 	public void newsInfoScheduler() {
 		String naverNewsUrl = "https://news.naver.com/main/main.naver";
 		List<NewsInfoDto> newsInfoList = newsService.getNewsInfo();

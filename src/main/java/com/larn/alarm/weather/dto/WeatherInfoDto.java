@@ -8,6 +8,8 @@ public class WeatherInfoDto {
 	private String day;
 	private String time;
 	private String temp;
+	private String weatherCode;
 	private String weatherStatus;
+
 
 }

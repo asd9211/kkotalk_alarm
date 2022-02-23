@@ -54,6 +54,7 @@ public class WeaterInfoService extends HttpCallService {
 		for (Object item : items) {
 			JSONObject itemObj = (JSONObject) item;
 			String category = itemObj.get("category").toString();
+
 			if (category.equals("TMP")) {
 				weaterInfoDto.setTemp(itemObj.get("fcstValue").toString());
 				weaterInfoDto.setDay(itemObj.get("baseDate").toString());
@@ -80,6 +81,7 @@ public class WeaterInfoService extends HttpCallService {
 				default:
 					break;
 				}
+				weaterInfoDto.setWeatherCode(weatherCode);
 				weaterInfoDto.setWeatherStatus(weatherStatus);
 			}
 		}
@@ -87,18 +89,11 @@ public class WeaterInfoService extends HttpCallService {
 		return weaterInfoDto;
 	}
 
-	// 추후 DB에 minTemp,maxTemp별로 옷차림 넣고 where temp 로 가져오게 변경
+
 	public String getWearRecommandForWeather(int temp) {
 		String recommandWear = "";
-		// 27 ~ : 나시티, 반바지, 민소매, 원피스
-		// 23 ~ 26 : 반팔, 얇은셔츠 ,얇은 긴팔, 반바지, 면바지
-		// 20~22 : 긴팔티, 가디건, 후드티, 면바지, 슬랙스, 청바지
-		// 17~19 : 니트, 가디건, 후드티, 맨투맨, 청바지, 면바지, 슬랙스, 원피스
-		// 12~18 : 자켓, 셔츠, 가디건, 간절기 야상
-		// 10~11 : 트렌치코트, 간절기 야상, 여러겹 껴입기
-		// 6~9 : 코트, 가죽자켓
-		// ~5 : 겨울옷 ( 야상, 패딩, 목도리 등등 )
-		if(temp > 27) { // 임시로 if 처리
+
+		if(temp > 27) { // 임시로 if 처리 추후 DB에 minTemp,maxTemp별로 옷차림 넣고 where temp 로 가져오게 변경
 			recommandWear = "나시티, 반바지, 민소매, 원피스";
 		}else if( 26 > temp && temp > 23) {
 			recommandWear = "반팔, 얇은셔츠 ,얇은 긴팔, 반바지, 면바지";

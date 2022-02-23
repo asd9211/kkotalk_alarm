@@ -27,9 +27,10 @@ public class RestaurantInfoService extends HttpCallService {
 	@Autowired
 	MessageSource msgSource;
 
-	public List<RestaurantInfoDto> getRestaurantInfoForWeather(String weatherStatus) {
+	public List<RestaurantInfoDto> getRestaurantInfoForWeather(String weatherCode) {
 		String cliendId = msgSource.getMessage("naver.api.client_id", null, Locale.getDefault());
 		String cliendSecret = msgSource.getMessage("naver.api.client_secret", null, Locale.getDefault());
+		String companyLocation = msgSource.getMessage("company_location", null, Locale.getDefault());
 
 		List<RestaurantInfoDto> restaurantInfoDtoList = new ArrayList<>();
 		// 추후 JPA 구현시 DB에 모든 메뉴 입력 후 랜덤으로 추출
@@ -42,7 +43,7 @@ public class RestaurantInfoService extends HttpCallService {
 		List<String> todayMenu;
 		int maxItemLength = 3 ;
 
-		if(weatherStatus.equals("0")) { // 이상없음
+		if(weatherCode.equals("0")) { // 이상없음
 			todayMenu = dailyMenu;
 		}else {						  // 비 or 눈 or 소나기
 			todayMenu = rainyMenu;
@@ -59,7 +60,7 @@ public class RestaurantInfoService extends HttpCallService {
 			UriComponentsBuilder builder = UriComponentsBuilder
 					.fromHttpUrl(NAVER_SEARCH_URL)
 					.queryParam("sort", "comment")
-					.queryParam("query", todayMenu.get(idx))
+					.queryParam("query", companyLocation + " " + todayMenu.get(idx) + " 맛집")
 					.queryParam("display", "1");
 
 			ResponseEntity<String> response = httpRequest(builder.build().toUriString(), HttpMethod.GET, searchRequestEntity);
