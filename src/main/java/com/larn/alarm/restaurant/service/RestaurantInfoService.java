@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.larn.alarm.base.service.HttpCallService;
-import com.larn.alarm.message.dto.ListMessageDto;
 import com.larn.alarm.restaurant.dto.RestaurantInfoDto;
 
 @Service

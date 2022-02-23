@@ -1,7 +1,5 @@
 package com.larn.alarm.news.service;
 
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -41,8 +39,9 @@ public class NewsService {
 		int sessionId = 100;
 
 		for (int i = 0; i <= 5; i++) {
-			driver.get( naverNewsUrl + "mode=LSD&mid=shm&sid1=" + sessionId);
-			sessionId++;
+			String param = "mode=LSD&mid=shm&sid1=" + sessionId;
+			driver.get( naverNewsUrl + param);
+
 			for(int k=1; k <= 3; k++) {
 				NewsInfoDto newsInfo = new NewsInfoDto();
 				try {
@@ -59,6 +58,7 @@ public class NewsService {
 				}
 
 			}
+			sessionId++;
 		}
 		driver.close();
 		driver.quit();

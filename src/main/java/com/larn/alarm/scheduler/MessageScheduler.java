@@ -162,7 +162,7 @@ public class MessageScheduler {
 			msgDtoItem.setImageUrl("");
 			msgDtoItem.setImageWidth("50");
 			msgDtoItem.setImageHeight("50");
-			msgDtoItem.setWebUrl(newsInfo.getUrl());	// 클릭시 naver 지도로 연결
+			msgDtoItem.setWebUrl(newsInfo.getUrl());	// 클릭시 뉴스로 연결
 			msgDtoItem.setMobileUrl(newsInfo.getUrl());
 			msgDtoItemList.add(msgDtoItem);
 			if(idx % 3 == 0) {

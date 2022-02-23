@@ -1,7 +1,6 @@
 package com.larn.alarm.base.service;
 
 import java.net.URI;
-import java.util.Map;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,7 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import com.larn.alarm.utils.StringUtils;
 
 
 /**
@@ -34,9 +32,9 @@ public class HttpCallService {
     	HttpHeaders requestHeaders = header;
 
         if (params == null || "".equals(params))
-            return new HttpEntity<Object>(requestHeaders);
+            return new HttpEntity<>(requestHeaders);
         else
-            return new HttpEntity<Object>(params, requestHeaders);
+            return new HttpEntity<>(params, requestHeaders);
     }
 
 	/**

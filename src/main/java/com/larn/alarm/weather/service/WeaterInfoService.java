@@ -14,7 +14,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.larn.alarm.base.service.HttpCallService;
 import com.larn.alarm.exception.ServiceException;
-import com.larn.alarm.weather.dto.WearRecommandDto;
 import com.larn.alarm.weather.dto.WeatherInfoDto;
 
 @Service
@@ -91,7 +90,6 @@ public class WeaterInfoService extends HttpCallService {
 	// 추후 DB에 minTemp,maxTemp별로 옷차림 넣고 where temp 로 가져오게 변경
 	public String getWearRecommandForWeather(int temp) {
 		String recommandWear = "";
-		// WearRecommandDto wearRecommandDto = new WearRecommandDto();
 		// 27 ~ : 나시티, 반바지, 민소매, 원피스
 		// 23 ~ 26 : 반팔, 얇은셔츠 ,얇은 긴팔, 반바지, 면바지
 		// 20~22 : 긴팔티, 가디건, 후드티, 면바지, 슬랙스, 청바지
@@ -102,8 +100,6 @@ public class WeaterInfoService extends HttpCallService {
 		// ~5 : 겨울옷 ( 야상, 패딩, 목도리 등등 )
 		if(temp > 27) { // 임시로 if 처리
 			recommandWear = "나시티, 반바지, 민소매, 원피스";
-		}else if( 26 > temp && temp > 23) {
-			recommandWear = "반팔, 얇은셔츠 ,얇은 긴팔, 반바지, 면바지";
 		}else if( 26 > temp && temp > 23) {
 			recommandWear = "반팔, 얇은셔츠 ,얇은 긴팔, 반바지, 면바지";
 		}else if( 22 > temp && temp > 20) {

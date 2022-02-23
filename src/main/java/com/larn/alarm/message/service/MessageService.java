@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import com.larn.alarm.base.service.AuthService;
 import com.larn.alarm.base.service.HttpCallService;
 import com.larn.alarm.exception.ServiceException;
 import com.larn.alarm.message.dto.DefaultMessageDto;
@@ -26,13 +25,11 @@ import com.larn.alarm.message.dto.ListMessageDto;
 public class MessageService extends HttpCallService{ //확장포인트에 따라 인터페이스로 구현 고민
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	private static final String MSG_SEND_SERVICE_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
-	private static final String SUCCESS_CODE = "0";
+	private static final String SUCCESS_CODE = "0"; //kakao api에서 return해주는 success code 값
 
 	@Autowired MessageSource msgSource;
 
 	public boolean sendMessage(String accessToken, DefaultMessageDto msgDto) {
-		String failMsg = msgSource.getMessage("msg.send.fail", null, Locale.getDefault());
-
 		JSONObject linkObj = new JSONObject();
     	linkObj.put("web_url", msgDto.getWebUrl());
     	linkObj.put("mobile_web_url", msgDto.getMobileUrl());
@@ -58,16 +55,10 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
         JSONObject jsonData = new JSONObject(response.getBody());
         resultCode = jsonData.get("result_code").toString();
 
-        if(resultCode.equals(SUCCESS_CODE)) {
-        	return true;
-        }else {
-        	throw new ServiceException(failMsg);
-        }
+        return successCheck(resultCode);
 	}
 
 	public boolean sendListMessage(String accessToken, ListMessageDto msgDto) {
-		String failMsg = msgSource.getMessage("msg.send.fail", null, Locale.getDefault());
-
 		JSONObject headerLinkObj = new JSONObject();
 		headerLinkObj.put("web_url", msgDto.getWebUrl());
 		headerLinkObj.put("mobile_web_url", msgDto.getMobileUrl());
@@ -109,10 +100,19 @@ public class MessageService extends HttpCallService{ //확장포인트에 따라
         JSONObject jsonData = new JSONObject(response.getBody());
         String resultCode = jsonData.get("result_code").toString();
 
-        if(resultCode.equals(SUCCESS_CODE)) {
-        	return true;
-        }else {
-        	throw new ServiceException(failMsg);
-        }
+        return successCheck(resultCode);
+	}
+
+	public boolean successCheck(String resultCode) {
+		String failMsg = msgSource.getMessage("msg.send.fail", null, Locale.getDefault());
+		String successMsg = msgSource.getMessage("msg.send.success", null, Locale.getDefault());
+
+		if(resultCode.equals(SUCCESS_CODE)) {
+			logger.info(successMsg);
+			return true;
+		}else {
+			throw new ServiceException(failMsg);
+		}
+
 	}
 }
