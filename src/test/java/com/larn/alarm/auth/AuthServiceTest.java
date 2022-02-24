@@ -1,22 +1,44 @@
 package com.larn.alarm.auth;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.junit.jupiter.api.Assertions.*;
+import com.larn.alarm.base.dto.AuthDto;
 import com.larn.alarm.base.service.AuthService;
 
 @SpringBootTest
 class AuthServiceTest {
 
-	@Autowired
-	AuthService authService;
+	public class AuthServiceMock extends AuthService {
+		public AuthServiceMock() {
+			super();
+		}
+		@Override
+		public AuthDto getKakaoAuthToken(String code) {
+			// TODO Auto-generated method stub
+			AuthDto expectDto = new AuthDto();
+			expectDto.setAccessToken("123");
+			expectDto.setRefrashToken("123");
+			return expectDto;
+		}
+	}
 
 	@Test
 	void 토큰_받아오기() {
-		//AuthService클래스에 authRequest하는 메서드를 분기해서 테스트해야 할 것 같음.
-	}
+		//given
+		AuthServiceMock authServiceMock = new AuthServiceMock();
+		String code = "test";
+		AuthDto expectAuthDto = new AuthDto();
+		expectAuthDto.setAccessToken("123");
+		expectAuthDto.setRefrashToken("123");
 
+
+		//when
+		AuthDto authDto = authServiceMock.getKakaoAuthToken(code);
+
+		//then
+		assertEquals(authDto.getAccessToken(), expectAuthDto.getAccessToken());
+	}
 }

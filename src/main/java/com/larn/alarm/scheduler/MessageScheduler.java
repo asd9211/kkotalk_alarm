@@ -11,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.larn.alarm.base.repository.AuthRepository;
 import com.larn.alarm.base.service.AuthService;
 import com.larn.alarm.exception.ServiceException;
 import com.larn.alarm.message.dto.DefaultMessageDto;
@@ -46,11 +47,14 @@ public class MessageScheduler {
 	@Autowired
 	NewsService newsService;
 
+	@Autowired
+	AuthRepository authRepository;
+
 	//@Scheduled(cron="0 00 07 * * ?")
-	@Scheduled(fixedRate = 10000)
+	//@Scheduled(fixedRate = 10000)
     public void morningWeatherInfoScheduler() { // 아침 날씨 알람 스케쥴러
 		String linkUrl = "https://weather.naver.com/today";
-		String authToken = AuthService.getAuthToken();
+		String authToken = authRepository.getAuthToken();
 		if(!StringUtils.isEmpty(authToken)) {
 			WeatherInfoDto weatherInfoDto = weaterInfoService.getWeatherInfo();
 			DefaultMessageDto msgDto = new DefaultMessageDto();
@@ -90,7 +94,7 @@ public class MessageScheduler {
 	//@Scheduled(fixedRate = 10000)
     public void nutrientsAlarmScheduler() { // 영양제 알림 스케쥴러
 		String linkUrl = "";
-		String authToken = AuthService.getAuthToken();
+		String authToken = authRepository.getAuthToken();
 		if(!StringUtils.isEmpty(authToken)) {
 			DefaultMessageDto msgDto = new DefaultMessageDto();
 
@@ -111,7 +115,7 @@ public class MessageScheduler {
 	public void restaurantRecommandScheduler() {
 		String naverMapUrl = "https://map.naver.com/v5/search/";
 
-		String authToken = AuthService.getAuthToken();
+		String authToken = authRepository.getAuthToken();
 		WeatherInfoDto weatherInfoDto = weaterInfoService.getWeatherInfo();
 		String weatherCode = weatherInfoDto.getWeatherCode();
 		List<ListMessageDto> msgDtoItemList = new ArrayList<>();
@@ -145,7 +149,7 @@ public class MessageScheduler {
 	public void newsInfoScheduler() {
 		String naverNewsUrl = "https://news.naver.com/main/main.naver";
 		List<NewsInfoDto> newsInfoList = newsService.getNewsInfo();
-		String authToken = AuthService.getAuthToken();
+		String authToken = authRepository.getAuthToken();
 
 		ListMessageDto msgDto = new ListMessageDto();
 		msgDto.setHeaderTitle("오늘의 주요 뉴스");
@@ -176,8 +180,8 @@ public class MessageScheduler {
 	}
 
 	//6시간마다 토큰 리프레시
-	@Scheduled(fixedRate = 21500000)
+	//@Scheduled(fixedRate = 21500000)
 	public void tokenRefrashSchduler() {
-		authService.setAuthRefash();
+		authService.saveAuthRefash();
 	}
 }

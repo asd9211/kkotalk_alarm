@@ -40,7 +40,7 @@ public class BaseController {
 	*/
 	@GetMapping("/")
 	public String serviceStart(@RequestParam("code") String code) {
-		boolean tokenYN = authService.setAuth(code);
+		boolean tokenYN = authService.saveAuthToken(code);
 		String tokenSuccessMsg = msgSource.getMessage("token.issued.success", null, Locale.getDefault());
 		String tokenFailMsg = msgSource.getMessage("token.issued.fail", null, Locale.getDefault());
 

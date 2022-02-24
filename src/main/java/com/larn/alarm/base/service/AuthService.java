@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import com.larn.alarm.base.dto.AuthDto;
+import com.larn.alarm.base.repository.AuthRepository;
 import com.larn.alarm.exception.ServiceException;
 import com.larn.alarm.utils.StringUtils;
 
@@ -26,30 +28,16 @@ import com.larn.alarm.utils.StringUtils;
 * @see None
 */
 @Service
-public class AuthService extends HttpCallService {
+public class AuthService extends HttpCallService implements AuthServiceInterface{
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private static final String AUTH_URL = "https://kauth.kakao.com/oauth/token";
-	private static String authToken;
-	private static String refrashAuthToken;
 
-	private static void setAuthToken(String authToken) {
-		AuthService.authToken = authToken;
-	}
+	@Autowired
+	MessageSource msgSource;
 
-	private static void setRefrashAuthToken(String refrashToken) {
-		AuthService.refrashAuthToken = refrashToken;
-	}
-
-	public static String getAuthToken() {
-		return authToken;
-	}
-
-	public static String getRefrashAuthToken() {
-		return refrashAuthToken;
-	}
-
-	@Autowired MessageSource msgSource;
+	@Autowired
+	AuthRepository authRepository;
 
 	/**
 	* kakao API 토큰 발급 method
@@ -58,7 +46,24 @@ public class AuthService extends HttpCallService {
 	* @ return boolean 토큰 발급 Y/N
 	* @ exception 예외사항
 	*/
-	public boolean setAuth(String code) {
+	public boolean saveAuthToken(String code) {
+		AuthDto authDto = getKakaoAuthToken(code);
+		return authRepository.saveAuthToken(authDto.getAccessToken()) && authRepository.saveRefrashAuthToken(authDto.getRefrashToken());
+	}
+
+	/**
+	* kakao API 토큰 Refrash method
+	*
+	* @ param
+	* @ return boolean 토큰 Refrash Y/N
+	* @ exception 예외사항
+	*/
+	public boolean saveAuthRefash() {
+		AuthDto authDto = getRefrashToken();
+		return authRepository.saveAuthToken(authDto.getAccessToken());
+	}
+
+	public AuthDto getKakaoAuthToken(String code) {
 		HttpHeaders header = new HttpHeaders();
 		String accessToken = "";
 		String refrashToken = "";
@@ -85,23 +90,17 @@ public class AuthService extends HttpCallService {
         	throw new ServiceException(tokenFailMsg);
         }
 
-        setAuthToken(accessToken);
-        setRefrashAuthToken(refrashToken);
+        AuthDto authDto = new AuthDto();
+        authDto.setAccessToken(accessToken);
+        authDto.setRefrashToken(refrashToken);
 
 		logger.info(tokenSuccessMsg);
         logger.info("======================== Auth Request End ========================");
 
-		return true;
+		return authDto;
 	}
 
-	/**
-	* kakao API 토큰 Refrash method
-	*
-	* @ param
-	* @ return boolean 토큰 Refrash Y/N
-	* @ exception 예외사항
-	*/
-	public boolean setAuthRefash() {
+	public AuthDto getRefrashToken() {
 		String accessToken = "";
 		String tokenFailMsg = msgSource.getMessage("token.issued.fail", null, Locale.getDefault());
 		String tokenSuccessMsg = msgSource.getMessage("token.issued.success", null, Locale.getDefault());
@@ -112,7 +111,7 @@ public class AuthService extends HttpCallService {
 
 		parameters.add("grant_type", msgSource.getMessage("kakao.auth.refrash_grant_type",null, Locale.getDefault()));
 		parameters.add("client_id", msgSource.getMessage("kakao.auth.client_id",null, Locale.getDefault()));
-		parameters.add("refresh_token", getRefrashAuthToken());
+		parameters.add("refresh_token", authRepository.getRefrashAuthToken());
 		parameters.add("client_secret", msgSource.getMessage("kakao.auth.client_secret",null, Locale.getDefault()));
 
 		HttpEntity<?> requestEntity = httpClientEntity(header, parameters);
@@ -124,12 +123,13 @@ public class AuthService extends HttpCallService {
         if(StringUtils.isEmpty(accessToken)) {
         	throw new ServiceException(tokenFailMsg);
         }
-        setAuthToken(accessToken);
+        AuthDto authDto = new AuthDto();
+        authDto.setAccessToken(accessToken);
+
         logger.info(tokenSuccessMsg);
         logger.info("======================== AuthRefrash Request End ========================");
 
-		return true;
-
+		return authDto;
 	}
 
 }
