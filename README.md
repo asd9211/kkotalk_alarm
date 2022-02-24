@@ -12,16 +12,16 @@
 
 
 ## 주요 기능
-+ **오늘의 날씨** 알림 / 날씨에 따른 **옷차림 추천**
+> **오늘의 날씨** 알림 / 날씨에 따른 **옷차림 추천**
 ## <img src=https://user-images.githubusercontent.com/47582622/155460470-5985f074-889e-415e-8db5-2bff9fed9e97.png width="200" height="200"/>
 
-+ 날씨에 따른 **점심메뉴 및 식당 추천(Naver Map 연동)**
+> 날씨에 따른 **점심메뉴 및 식당 추천(Naver Map 연동)**
 ## <img src=https://user-images.githubusercontent.com/47582622/155460634-76e2adcc-bb00-4aa4-8185-c2f073026691.png width="200" height="300"/>
 
-+ **아침 주요 뉴스** 알림 ( 정치, 경제, 사회, 생활문화, 세계, 과학 )
+> **아침 주요 뉴스** 알림 ( 정치, 경제, 사회, 생활문화, 세계, 과학 )
 ## <img src=https://user-images.githubusercontent.com/47582622/155460799-6158bc7f-faae-482a-b99f-33f33c44101b.png width="200" height="300"/>
 
-+ 시간별 영양제 복용 알림
+> 시간별 영양제 복용 알림
 ## <img src=https://user-images.githubusercontent.com/47582622/155460922-40a1c7ba-0772-446d-86a1-dee1d104b8cd.png width="200" height="100"/>
 
 - ...
