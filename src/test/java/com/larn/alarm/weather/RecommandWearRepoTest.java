@@ -1,5 +1,7 @@
 package com.larn.alarm.weather;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -18,14 +20,14 @@ public class RecommandWearRepoTest {
 	@Test
 	public void 온도별_추천옷_불러오기() {
 		//given
-		int temp = 28;
+		int temp = 24;
 
 		//when
-		List<RecommandWearDto> recommandWear = recommandWearRepository.findBytempQuery(28);
+		List<RecommandWearDto> recommandWear = recommandWearRepository.findBytempQuery(temp);
 
 		//then
 		recommandWear.forEach(wear ->{
-			System.out.println(wear);
+			assertEquals("반팔",wear.getWear());
 		});
 	}
 

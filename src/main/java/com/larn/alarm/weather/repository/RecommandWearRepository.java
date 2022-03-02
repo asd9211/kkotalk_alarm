@@ -11,7 +11,7 @@ import com.larn.alarm.weather.dto.RecommandWearDto;
 
 public interface RecommandWearRepository extends JpaRepository<RecommandWearDto, Long>{
 
-	@Query(value="SELECT r.min_temp, r.wear, r.max_temp FROM RECOMMANDWEAR r WHERE r.max_temp > :temp ",nativeQuery=true)
+	@Query(value="SELECT * FROM Recommandwear r WHERE r.max_temp > :temp and r.min_temp < :temp", nativeQuery = true)
 	List<RecommandWearDto> findBytempQuery(@Param("temp") int temp);
 
 }
