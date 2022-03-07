@@ -1,6 +1,7 @@
 package com.larn.alarm.weather.service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -14,7 +15,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.larn.alarm.base.service.HttpCallService;
 import com.larn.alarm.exception.ServiceException;
+import com.larn.alarm.weather.dto.RecommandWearDto;
 import com.larn.alarm.weather.dto.WeatherInfoDto;
+import com.larn.alarm.weather.repository.RecommandWearRepository;
 
 @Service
 public class WeatherInfoService extends HttpCallService {
@@ -23,6 +26,8 @@ public class WeatherInfoService extends HttpCallService {
 	@Autowired
 	MessageSource msgSource;
 
+	@Autowired
+	RecommandWearRepository recommandWearRepository;
 	public WeatherInfoDto getWeatherInfo() {
 		LocalDate now = LocalDate.now();
 		String todayDate = now.toString().replaceAll("-", "");
@@ -91,24 +96,15 @@ public class WeatherInfoService extends HttpCallService {
 
 
 	public String getWearRecommandForWeather(int temp) {
-		String recommandWear = "";
-
-		if(temp > 27) { // 임시로 if 처리 추후 DB에 minTemp,maxTemp별로 옷차림 넣고 where temp 로 가져오게 변경
-			recommandWear = "나시티, 반바지, 민소매, 원피스";
-		}else if( 26 > temp && temp > 23) {
-			recommandWear = "반팔, 얇은셔츠 ,얇은 긴팔, 반바지, 면바지";
-		}else if( 22 > temp && temp > 20) {
-			recommandWear = "긴팔티, 가디건, 후드티, 면바지, 슬랙스, 청바지";
-		}else if( 19 > temp && temp > 17) {
-			recommandWear = "니트, 가디건, 후드티, 맨투맨, 청바지, 면바지, 슬랙스, 원피스";
-		}else if( 11 > temp && temp > 10) {
-			recommandWear = "트렌치코트, 간절기 야상, 여러겹 껴입기";
-		}else if( 9 > temp && temp > 6) {
-			recommandWear = "코트, 가죽자켓";
-		}else if( 5 > temp) {
-			recommandWear = "겨울옷 ( 야상, 패딩, 목도리 등등 )";
+		StringBuilder sb = new StringBuilder();
+		String separator = ", ";
+		List<RecommandWearDto> recommandWearList = recommandWearRepository.findBytempQuery(temp);
+		for(RecommandWearDto recommandWearDto : recommandWearList) {
+			sb.append(recommandWearDto.getWear());
+			sb.append(separator);
 		}
-
-		return recommandWear;
+		String clothes = sb.toString();
+		clothes = clothes.replaceAll(separator + "$", "");
+		return clothes;
 	}
 }

@@ -9,8 +9,9 @@ import lombok.Data;
 @Entity(name="Recommandwear")
 public class RecommandWearDto {
 
-	@Id
+
 	private long minTemp;
 	private long maxTemp;
+	@Id
 	private String wear;
 }
