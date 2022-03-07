@@ -31,8 +31,8 @@
  - SpringBoot
  - Gradle
  - Open jdk 1.8
- - Selenium
- - ...
+ - Selenium (크롤링 및 웹브라우저 자동 로그인)
+ - Naver Cloud (배포)
  
  
 ## API 
@@ -47,5 +47,5 @@
   - JPA 추가
   - H2 DB 연동
   - Naver 지도 사용자 현재위치로  
- - 배포환경 고민. aws or azure
+  - 배포 ( Naver Cloud 서버 생성 완료 및 타 서비스 배포해 놓은 상태. 이중으로 올려도 메모리 over flow 없는지  )
  
